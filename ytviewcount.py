@@ -98,22 +98,52 @@ def finish_csvfile(totalviews):
             fs.write('"Total Views:";"' + str(totalviews) + '"' + os.linesep)
 
 
+# Code originally by Christian Hill, taken from
+# https://scipython.com/blog/parenthesis-matching-in-python/ & adapted
+def find_parentheses(s):
+    """ Find and return the location of the matching parentheses pairs in s.
+
+    Given a string, s, return a dictionary of start: end pairs giving the
+    indexes of the matching parentheses in s. Suitable exceptions are
+    raised if s contains unbalanced parentheses.
+
+    """
+
+    # The indexes of the open parentheses are stored in a stack, implemented
+    # as a list
+
+    stack = []
+    parentheses_locs = {}
+    for i, c in enumerate(s):
+        if c == '{':
+            stack.append(i)
+        elif c == '}':
+            try:
+                parentheses_locs[stack.pop()] = i
+            except IndexError:
+                # we don't care since we're parsing something incomplete
+                break
+
+    if stack:
+        raise IndexError('No matching close parenthesis to open parenthesis '
+                         'at index {}'.format(stack.pop()))
+
+    # actually, we only care about the first, ie. outermost pair
+    p = sorted([(k,v) for k, v in parentheses_locs.items()])
+
+    return p[0][0], p[0][1]
+
+
 def parse_page(code):
 
     global args
 
     views = 0
 
-    # We assume there's a piece of JSON between "videoDetails" & "annotations".
-    # Should YouTube change this, this piece of code will break.
-    # (tbd: instead, search for a pair of matching { + } after videoDetails)
-
     pos1 = code.find('"videoDetails":')
-    pos2 = code.find('"annotations":')
-
-    if pos1 > 0 and pos2 > 0 and pos2 > pos1:
-
-        videoDetails = code[pos1 + 15:pos2 - 1]
+    if pos1 > 0:
+        pos = find_parentheses(code[pos1:])
+        videoDetails = code[pos1 + pos[0]: pos1 + pos[1] + 1]
 
         # videoDetails should now hold a valid JSON string
         if videoDetails[0] == '{' and videoDetails[-1] == '}':
