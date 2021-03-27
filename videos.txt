@@ -1,0 +1,17 @@
+# Sample list of URLs for ytviewcount.py
+#
+# Empty lines and lines starting with # are ignored,
+# everything else is assumed to be a YouTube URL.
+#
+# These are some talks from our TEDxStuttgart events.
+# Try running the script with and without the --tedx
+# option to see the different outputs.
+#
+
+https://www.youtube.com/watch?v=cEqK275To_U
+https://www.youtube.com/watch?v=qFza3W87eDg
+
+https://www.youtube.com/watch?v=Z0pVjFflZgk
+https://www.youtube.com/watch?v=GnFQhhd52Vs
+https://www.youtube.com/watch?v=6d-JDy_OKxE
+
