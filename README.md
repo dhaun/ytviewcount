@@ -5,12 +5,13 @@
 Counts views of videos on YouTube.
 It reads a list of YouTube URLs from a file, logs the title and views for each video in a CSV file, and adds a total of all views.
 
+**Note:** Running this script does *not* increase the view count of the videos.
 
 ## Why?
 
-I use this to keep track of the views of the videos from our TEDxStuttgart events. Hence the `--tedx` and `--tedxstuttgart` modes explained below.
+I use this to keep track of the views of the videos from our TEDxStuttgart events. Hence the `--tedx` and `--tedxstuttgart` options explained below.
 
-This started life as a Bash script. As YouTube kept changing the page format, it became increasingly harder to parse it with *nix command line tools, so I eventually rewrote it in Python. These days, a YouTube page is mostly JavaScript, and what you see in your browser is generated on the fly.
+This started life as a Bash script. As YouTube kept changing the page format, it became increasingly harder to parse it with \*nix command line tools, so I eventually rewrote it in Python. These days, a YouTube page is mostly JavaScript, and what you see in your browser has been generated on the fly.
 
 
 ## Requirements
