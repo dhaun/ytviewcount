@@ -159,7 +159,7 @@ start_csvfile()
 totalviews = 0
 for line in videos:
     url = line.strip()
-    if len(url) > 0 and url[0] != '#':
+    if len(url) > 0 and url[0] != '#' and url[:4] == 'http':
 
         with urllib.request.urlopen(url) as f:
             content = f.read().decode('utf-8')
