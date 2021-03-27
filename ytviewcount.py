@@ -59,6 +59,17 @@ def format_tedxtitle(fulltitle):
     return speaker, title
 
 
+def start_csvfile():
+
+    global args
+
+    with open(args.output, 'w') as fs:
+        if args.tedx:
+            fs.write('"Speaker";"Title";"Views"' + os.linesep)
+        else:
+            fs.write('"Title";"Views"' + os.linesep)
+
+
 def write_csvline(title, views, speaker = ''):
 
     global args
@@ -73,6 +84,18 @@ def write_csvline(title, views, speaker = ''):
 
     with open(args.output, 'a', encoding = 'utf-8') as fs:
         fs.write(line + os.linesep)
+
+
+def finish_csvfile(totalviews):
+
+    global args
+
+    with open(args.output, 'a') as fs:
+        if args.tedx:
+            fs.write('"";"Total Views:";"' + str(totalviews) + '"' + os.linesep)
+        else:
+            fs.write('"Total Views:";"' + str(totalviews) + '"' + os.linesep)
+
 
 
 def parse_page(code):
@@ -131,11 +154,7 @@ if args.tedxstuttgart:
 with open(args.input, 'r') as fs:
     videos = fs.readlines()
 
-with open(args.output, 'w') as fs:
-    if args.tedx:
-        fs.write('"Speaker";"Title";"Views"' + os.linesep)
-    else:
-        fs.write('"Title";"Views"' + os.linesep)
+start_csvfile()
 
 totalviews = 0
 for line in videos:
@@ -148,9 +167,5 @@ for line in videos:
         views = parse_page(content)
         totalviews = totalviews + views
 
-with open(args.output, 'a') as fs:
-    if args.tedx:
-        fs.write('"";"Total Views:";"' + str(totalviews) + '"' + os.linesep)
-    else:
-        fs.write('"Total Views:";"' + str(totalviews) + '"' + os.linesep)
+finish_csvfile(totalviews)
 
