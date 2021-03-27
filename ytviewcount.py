@@ -20,8 +20,9 @@ def format_tedxtitle(fulltitle):
     if len(parts) < 3:
         # old-style titles are formatted "<title>: <speaker> at TEDxEvent"
 
-        # exception: Ross Fisher's talk has a colon in the title,
+        # exception: Ross Fisher's TEDxStuttgart talk has a colon in the title,
         # and the title ends in a question mark
+        # (tbd: make this more generic)
         p = fulltitle.find('?')
         if p > 0:
             # include question mark
@@ -97,7 +98,6 @@ def finish_csvfile(totalviews):
             fs.write('"Total Views:";"' + str(totalviews) + '"' + os.linesep)
 
 
-
 def parse_page(code):
 
     global args
@@ -124,12 +124,9 @@ def parse_page(code):
             if args.tedx:
                 # do some special formatting for TEDx talks
                 speaker, title = format_tedxtitle(fulltitle)
-            else:
-                title = fulltitle
-
-            if args.tedx:
                 write_csvline(title, views, speaker)
             else:
+                title = fulltitle
                 write_csvline(title, views)
 
         else:
@@ -161,8 +158,8 @@ for line in videos:
     url = line.strip()
     if len(url) > 0 and url[0] != '#' and url[:4] == 'http':
 
-        with urllib.request.urlopen(url) as f:
-            content = f.read().decode('utf-8')
+        with urllib.request.urlopen(url) as fs:
+            content = fs.read().decode('utf-8')
 
         views = parse_page(content)
         totalviews = totalviews + views
