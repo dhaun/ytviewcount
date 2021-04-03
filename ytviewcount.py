@@ -15,36 +15,104 @@ def format_tedxtitle(fulltitle):
 
     global args
 
-    # newer titles are formatted "<title> | <speaker> | TEDxEvent"
-    parts = fulltitle.split('|')
-    if len(parts) < 3:
-        # old-style titles are formatted "<title>: <speaker> at TEDxEvent"
+    # most titles are formatted "<title> | <speaker> | TEDxEvent"
+    parts = fulltitle.split(' | ')
+    if len(parts) == 3:
+        # most titles use this format
+        title = parts[0]
+        speaker = parts[1]
 
-        # exception: Ross Fisher's TEDxStuttgart talk has a colon in the title,
-        # and the title ends in a question mark
-        # (tbd: make this more generic)
-        p = fulltitle.find('?')
-        if p > 0:
-            # include question mark
-            title = fulltitle[0:p+1]
+    # there's a lot of variation in the early days, though ...
+
+    elif len(parts) == 2:
+        # Possibly old style w/o title; there are two variants:
+        # "<speaker> | TEDxEvent" and "TEDxEvent | <speaker>"
+        if parts[0].find('TEDx') >= 0:
+            title = parts[0] # no title given, so use TEDx event name
+            speaker = parts[1]
+        elif parts[1].find('TEDx') >= 0:
+            speaker = parts[0]
+            title = parts[1] # no title given, so use TEDx event name
         else:
-            # find last(!) colon, for titles with a colon in them
-            p = fulltitle.rfind(':')
-            title = fulltitle[0:p]
-        if p > 0:
-            at = fulltitle.find(" at ")
-            if at > 0:
-                speaker = fulltitle[p+2:at]
+            # just use both parts, whatever they are
+            speaker = parts[0]
+            title = parts[1]
+            print("WARNING: format not recognized for", fulltitle)
 
-                title = title.strip()
-                speaker = speaker.strip()
+        if title == 'TEDx':
+            # special handling for https://www.youtube.com/watch?v=zf2F0c9R4Mc
+            title = speaker
+            speaker = 'TEDx'
+
+    elif fulltitle[:4] == 'TEDx':
+        # another popular old format: "TEDxEvent - <speaker> - <date>"
+        # but also sometimes:         "TEDxEvent - <speaker> - <title>"
+        parts = fulltitle.split(' - ')
+        if len(parts) < 3:
+            # typos (missing blank) happen ...
+            p2 = fulltitle.split(' -')
+            if len(p2) == 3:
+                parts = p2
             else:
-                print("not found - old-style speaker name")
+                p2 = fulltitle.split('- ')
+                if len(p2) == 3:
+                    parts = p2
+
+        if len(parts) == 3:
+            # double-check the last part - does it have numbers?
+            p3 = parts[2].strip()
+            if p3[:1].isdigit() and p3[-1].isdigit():
+                title = parts[0] # no title given, so use TEDx event name
+                speaker = parts[1]
+            else:
+                title = parts[2] # assume the last part is the title
+                speaker = parts[1]
         else:
-            print("not found - old-style title")
+            # just use what we have, whatever it may be
+            if len(parts) == 2:
+                speaker = part[0]
+                title = part[1]
+            else:
+                speaker = ''
+                title = fulltitle
+            print("WARNING: format not recognized for", fulltitle)
+
+    elif ' at TEDx' in fulltitle:
+        # yet another popular variation: "<something> at TEDxEvent"
+        # where <something> may or may not include the title
+
+        at = fulltitle.find(' at TEDx')
+        something = fulltitle[:at].strip()
+
+        c = something.find(':')
+        if c < 0:
+            # no colon? probably just "<speaker> at TEDxEvent"
+            speaker = something
+            title = fulltitle[at + 4:] # use the TEDx event name
+
+        else:
+            # assume it's "<title>: <speaker> at TEDxEvent"
+            # but there's a twist when the title ends with a punctuation mark
+            p = something.rfind(':') # find last(!) colon
+
+            # check for title ending in '!' or '?'
+            p2 = something.rfind('! ')
+            if p2 < 0:
+                p2 = something.rfind('? ')
+
+            if p2 > 0:
+                title = something[:p2 + 1] # including the punctuation mark
+                speaker = something[p2 + 2:]
+            else:
+                # no extra punctuation mark, so assume title ends at ':'
+                title = something[:p]
+                speaker = something[p + 2:]
+
     else:
-        title = parts[0].strip()
-        speaker = parts[1].strip()
+        # give up
+        speaker = ''
+        title = fulltitle
+        print("WARNING: format not recognized for", fulltitle)
 
     if args.tedxstuttgart:
         # At TEDxStuttgart, we strip speakers of their titles.
