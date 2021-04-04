@@ -100,7 +100,8 @@ def format_tedxtitle(fulltitle):
             if p2 < 0:
                 p2 = something.rfind('? ')
 
-            if p2 > 0:
+            if p2 > 0 and p2 > p:
+                # title ends in an exclamation mark
                 title = something[:p2 + 1] # including the punctuation mark
                 speaker = something[p2 + 2:]
             else:
