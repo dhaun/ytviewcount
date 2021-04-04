@@ -130,26 +130,26 @@ def format_tedxtitle(fulltitle):
 
 def start_csvfile():
 
-    global args
+    global args, fieldsep
 
     with open(args.output, 'w') as fs:
         if args.tedx:
-            fs.write('"Speaker";"Title";"Views"' + os.linesep)
+            fs.write('"Speaker"' + fieldsep + '"Title"' + fieldsep + '"Views"' + os.linesep)
         else:
-            fs.write('"Title";"Views"' + os.linesep)
+            fs.write('"Title"' + fieldsep + '"Views"' + os.linesep)
 
 
 def write_csvline(title, views, speaker = ''):
 
-    global args
+    global args, fieldsep
 
     # need to escape quotes for CSV
     title = title.replace('"', '""')
 
     if args.tedx:
-        line = '"' + speaker + '";"' + title + '";"' + views + '"'
+        line = '"' + speaker + '"' + fieldsep + '"' + title + '"' + fieldsep + '"' + views + '"'
     else:
-        line = '"' + title + '";"' + views + '"'
+        line = '"' + title + '"' + fieldsep + '"' + views + '"'
 
     with open(args.output, 'a', encoding = 'utf-8') as fs:
         fs.write(line + os.linesep)
@@ -157,16 +157,16 @@ def write_csvline(title, views, speaker = ''):
 
 def finish_csvfile(totalviews):
 
-    global args
+    global args, fieldsep
 
     totals_text = 'Total Views:'
 
     if not args.skipTotals:
         with open(args.output, 'a') as fs:
             if args.tedx:
-                fs.write('"";"' + totals_text + '";"' + str(totalviews) + '"' + os.linesep)
+                fs.write('""' + fieldsep + '"' + totals_text + '"' + fieldsep + '"' + str(totalviews) + '"' + os.linesep)
             else:
-                fs.write('"' + totals_text + '";"' + str(totalviews) + '"' + os.linesep)
+                fs.write('"' + totals_text + '"' + fieldsep + '"' + str(totalviews) + '"' + os.linesep)
 
     if args.printTotals:
         print(totals_text, totalviews)
@@ -247,12 +247,17 @@ parser.add_argument('-o', '--output', metavar = 'csvfile', default = 'viewcount.
 parser.add_argument('-i', '--input', metavar = 'videofile', default = 'videos.txt', help = 'Name of a file with a list of URLs')
 parser.add_argument('--skipTotals', action = 'store_true', default = False, help = 'Do not add total views entry to the CSV file.')
 parser.add_argument('--printTotals', action = 'store_true', default = False, help = 'Print/display total views count.')
+parser.add_argument('--useCommas', action = 'store_true', default = False, help = 'Use commas as field separators in the CSV file.')
 parser.add_argument('--tedx', action = 'store_true', default = False, help = 'Videos are from a TEDx event (split title into speaker + talk title')
 parser.add_argument('--tedxstuttgart', action = 'store_true', default = False, help = 'Videos are from a TEDxStuttgart event (activates some custom formatting)')
 args = parser.parse_args()
 
 if args.tedxstuttgart:
     args.tedx = True
+
+fieldsep = ';'
+if args.useCommas:
+    fieldsep = ','
 
 with open(args.input, 'r') as fs:
     videos = fs.readlines()
