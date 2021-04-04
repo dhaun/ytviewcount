@@ -147,7 +147,7 @@ def write_csvline(title, views, speaker = ''):
     # need to escape quotes for CSV
     title = title.replace('"', '""')
 
-    line = '"' + title + '"' + fieldsep + '"' + views + '"'
+    line = '"' + title + '"' + fieldsep + views
     if args.tedx:
         line = '"' + speaker + '"' + fieldsep + line
 
@@ -162,7 +162,7 @@ def finish_csvfile(totalviews):
     totals_text = 'Total Views:'
 
     if not args.skipTotals:
-        totals = '"' + totals_text + '"' + fieldsep + '"' + str(totalviews) + '"'
+        totals = '"' + totals_text + '"' + fieldsep + str(totalviews)
         if args.tedx:
             totals = '""' + fieldsep + totals
 
