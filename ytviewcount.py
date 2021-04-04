@@ -159,11 +159,17 @@ def finish_csvfile(totalviews):
 
     global args
 
-    with open(args.output, 'a') as fs:
-        if args.tedx:
-            fs.write('"";"Total Views:";"' + str(totalviews) + '"' + os.linesep)
-        else:
-            fs.write('"Total Views:";"' + str(totalviews) + '"' + os.linesep)
+    totals_text = 'Total Views:'
+
+    if not args.skipTotals:
+        with open(args.output, 'a') as fs:
+            if args.tedx:
+                fs.write('"";"' + totals_text + '";"' + str(totalviews) + '"' + os.linesep)
+            else:
+                fs.write('"' + totals_text + '";"' + str(totalviews) + '"' + os.linesep)
+
+    if args.printTotals:
+        print(totals_text, totalviews)
 
 
 # Code originally by Christian Hill, taken from
@@ -239,6 +245,8 @@ def parse_page(code):
 parser = argparse.ArgumentParser(description = 'Counts views of videos on YouTube')
 parser.add_argument('-o', '--output', metavar = 'csvfile', default = 'viewcount.csv', help = 'Name of CSV output file')
 parser.add_argument('-i', '--input', metavar = 'videofile', default = 'videos.txt', help = 'Name of a file with a list of URLs')
+parser.add_argument('--skipTotals', action = 'store_true', default = False, help = 'Do not add total views entry to the CSV file.')
+parser.add_argument('--printTotals', action = 'store_true', default = False, help = 'Print/display total views count.')
 parser.add_argument('--tedx', action = 'store_true', default = False, help = 'Videos are from a TEDx event (split title into speaker + talk title')
 parser.add_argument('--tedxstuttgart', action = 'store_true', default = False, help = 'Videos are from a TEDxStuttgart event (activates some custom formatting)')
 args = parser.parse_args()
