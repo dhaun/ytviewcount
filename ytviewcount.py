@@ -132,11 +132,12 @@ def start_csvfile():
 
     global args, fieldsep
 
-    with open(args.output, 'w') as fs:
-        if args.tedx:
-            fs.write('"Speaker"' + fieldsep + '"Title"' + fieldsep + '"Views"' + os.linesep)
-        else:
-            fs.write('"Title"' + fieldsep + '"Views"' + os.linesep)
+    headline = '"Title"' + fieldsep + '"Views"'
+    if args.tedx:
+        headline = '"Speaker"' + fieldsep + headline
+
+    with open(args.output, 'w', encoding = 'utf-8') as fs:
+        fs.write(headline + os.linesep)
 
 
 def write_csvline(title, views, speaker = ''):
@@ -146,10 +147,9 @@ def write_csvline(title, views, speaker = ''):
     # need to escape quotes for CSV
     title = title.replace('"', '""')
 
+    line = '"' + title + '"' + fieldsep + '"' + views + '"'
     if args.tedx:
-        line = '"' + speaker + '"' + fieldsep + '"' + title + '"' + fieldsep + '"' + views + '"'
-    else:
-        line = '"' + title + '"' + fieldsep + '"' + views + '"'
+        line = '"' + speaker + '"' + fieldsep + line
 
     with open(args.output, 'a', encoding = 'utf-8') as fs:
         fs.write(line + os.linesep)
@@ -162,11 +162,12 @@ def finish_csvfile(totalviews):
     totals_text = 'Total Views:'
 
     if not args.skipTotals:
+        totals = '"' + totals_text + '"' + fieldsep + '"' + str(totalviews) + '"'
+        if args.tedx:
+            totals = '""' + fieldsep + totals
+
         with open(args.output, 'a') as fs:
-            if args.tedx:
-                fs.write('""' + fieldsep + '"' + totals_text + '"' + fieldsep + '"' + str(totalviews) + '"' + os.linesep)
-            else:
-                fs.write('"' + totals_text + '"' + fieldsep + '"' + str(totalviews) + '"' + os.linesep)
+            fs.write(totals + os.linesep)
 
     if args.printTotals:
         print(totals_text, totalviews)
