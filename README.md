@@ -11,7 +11,7 @@ It reads a list of YouTube URLs from a file, logs the title and views for each v
 
 I use this to keep track of the views of the videos from our TEDxStuttgart events. Hence the `--tedx` and `--tedxstuttgart` options explained below.
 
-This started life as a Bash script. As YouTube kept changing the page format, it became increasingly harder to parse it with \*nix command line tools, so I eventually rewrote it in Python. These days, a YouTube page is mostly JavaScript, and what you see in your browser has been generated on the fly.
+This started its life as a Bash script. As YouTube kept changing the page format, it became increasingly harder to parse it with \*nix command line tools, so I eventually rewrote it in Python. These days, a YouTube page is mostly JavaScript, and what you see in your browser has been generated on the fly.
 
 
 ## Requirements
@@ -36,6 +36,12 @@ Change the name of the input file with the `-i` option and that of the output fi
 `python3 ytviewcount.py -i myvideos.txt -o analysis.csv`
 
 ### Options
+
+`--skipTotals` will not write the number of total views into the CSV file. May be useful if you want to do some automated processing of the CSV files.
+
+`--printTotals` prints (displays) the total view count when running the script.
+
+`--useCommas` will make the script use commas instead of semicolons as the field separators for the CSV file. I found that semicolons work better for software like Microsoft Excel or Apple's Numbers, but other software may prefer commas.
 
 `--tedx` activates a TEDx mode where it assumes that the title of the video contains the name of the speaker and the name of the talk. The CSV file will then list them in separate columns.
 
