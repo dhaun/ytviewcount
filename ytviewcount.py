@@ -120,6 +120,9 @@ def format_tedxtitle(fulltitle):
         # Some early videos have it, though.
         speaker = speaker.replace('Dr.', '')
         speaker = speaker.replace('Prof.', '')
+        # fix an embarrassing little typo in a speaker name
+        if speaker == 'Dong Seon-Chang':
+            speaker = 'Dong-Seon Chang'
 
         title = title.replace('--', '-')
 
