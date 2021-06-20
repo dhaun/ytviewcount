@@ -139,12 +139,14 @@ def start_csvfile():
     headline = '"Title"' + fieldsep + '"Views"'
     if args.tedx:
         headline = '"Speaker"' + fieldsep + headline
+    if args.addUrl:
+        headline = headline + fieldsep + '"URL"'
 
     with open(args.output, 'w', encoding = 'utf-8') as fs:
         fs.write(headline + os.linesep)
 
 
-def write_csvline(title, views, speaker = ''):
+def write_csvline(title, views, url, speaker = ''):
 
     global args, fieldsep
 
@@ -154,6 +156,8 @@ def write_csvline(title, views, speaker = ''):
     line = '"' + title + '"' + fieldsep + views
     if args.tedx:
         line = '"' + speaker + '"' + fieldsep + line
+    if args.addUrl:
+        line = line + fieldsep + '"' + url + '"'
 
     with open(args.output, 'a', encoding = 'utf-8') as fs:
         fs.write(line + os.linesep)
@@ -213,7 +217,7 @@ def find_parentheses(s):
     return p[0][0], p[0][1]
 
 
-def parse_page(code):
+def parse_page(code, url):
 
     global args
 
@@ -233,10 +237,10 @@ def parse_page(code):
             if args.tedx:
                 # do some special formatting for TEDx talks
                 speaker, title = format_tedxtitle(fulltitle)
-                write_csvline(title, views, speaker)
+                write_csvline(title, views, url, speaker)
             else:
                 title = fulltitle
-                write_csvline(title, views)
+                write_csvline(title, views, url)
 
         else:
             print("not found - matching brackets for videoDetails")
@@ -253,6 +257,7 @@ parser.add_argument('-i', '--input', metavar = 'videofile', default = 'videos.tx
 parser.add_argument('--skipTotals', action = 'store_true', default = False, help = 'Do not add total views entry to the CSV file.')
 parser.add_argument('--printTotals', action = 'store_true', default = False, help = 'Print/display total views count.')
 parser.add_argument('--useCommas', action = 'store_true', default = False, help = 'Use commas as field separators in the CSV file.')
+parser.add_argument('--addUrl', action = 'store_true', default = False, help = 'Add video URL to the CSV file.')
 parser.add_argument('--tedx', action = 'store_true', default = False, help = 'Videos are from a TEDx event (split title into speaker + talk title')
 parser.add_argument('--tedxstuttgart', action = 'store_true', default = False, help = 'Videos are from a TEDxStuttgart event (activates some custom formatting)')
 args = parser.parse_args()
@@ -277,7 +282,7 @@ for line in videos:
         with urllib.request.urlopen(url) as fs:
             content = fs.read().decode('utf-8')
 
-        views = parse_page(content)
+        views = parse_page(content, url)
         totalviews = totalviews + views
 
 finish_csvfile(totalviews)
