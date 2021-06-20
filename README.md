@@ -43,6 +43,8 @@ Change the name of the input file with the `-i` option and that of the output fi
 
 `--useCommas` will make the script use commas instead of semicolons as the field separators for the CSV file. I found that semicolons work better for software like Microsoft Excel or Apple's Numbers, but other software may prefer commas.
 
+`--addUrl` will also write the video URL to the CSV file.
+
 `--tedx` activates a TEDx mode where it assumes that the title of the video contains the name of the speaker and the name of the talk. The CSV file will then list them in separate columns.
 
 `--tedxstuttgart` activates some special formatting for older videos from our TEDxStuttgart events. You won't need this option.
