@@ -219,7 +219,7 @@ def find_parentheses(s):
     return p[0][0], p[0][1]
 
 
-def parse_page_videoDetails(code, url: str):
+def parse_page_video_details(code, url: str):
     global args
 
     views = 0
@@ -254,7 +254,7 @@ def parse_page_videoDetails(code, url: str):
     return result
 
 
-def parse_page_playerMicroformatRenderer(code, url: str):
+def parse_page_player_microformat_renderer(code, url: str):
     global args
 
     pos1 = code.find('"playerMicroformatRenderer":')
@@ -317,15 +317,16 @@ for line in videos:
         with urllib.request.urlopen(url) as fs:
             content = fs.read().decode('utf-8')
 
-        page_info = parse_page_videoDetails(content, url)
+        page_info = parse_page_video_details(content, url)
 
         if args.withDate:
-            publication_date = parse_page_playerMicroformatRenderer(content, url)
+            publication_date = parse_page_player_microformat_renderer(content, url)
 
         # We're in TEDx mode if speaker is set
         if args.tedx and page_info['speaker']:
             if args.withDate and publication_date:
-                write_csvline(page_info['title'], page_info['views'], page_info['url'], page_info['speaker'], publication_date)
+                write_csvline(page_info['title'], page_info['views'], page_info['url'], page_info['speaker'],
+                              publication_date)
             else:
                 write_csvline(page_info['title'], page_info['views'], page_info['url'], page_info['speaker'])
         else:
